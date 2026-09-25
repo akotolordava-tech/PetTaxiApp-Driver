@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ka" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetTaxi - მძღოლის პანელი</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .container { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 30px 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); 
+            width: 100%; 
+            max-width: 420px; 
+            border-top: 6px solid #28a745;
+            text-align: center;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .lang-switcher {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 5px;
+        }
+        .lang-btn {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-btn.active, .lang-btn:hover {
+            background: #28a745;
+            color: #fff;
+            border-color: #28a745;
+        }
+        .logo-container {
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border: 2px solid #fff;
+        }
+        h2 { 
+            color: #28a745; 
+            margin-bottom: 20px; 
+            font-size: 22px;
+        }
+        .form-group { 
+            margin-bottom: 15px; 
+            text-align: left;
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+            color: #333; 
+            font-size: 14px;
+        }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #bce0fd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            outline: none;
+            transition: border-color 0.3s;
+            background: #fff;
+        }
+        input:focus {
+            border-color: #28a745;
+        }
+        button { 
+            width: 100%; 
+            background-color: #ffcc00; 
+            color: #111; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
+        button:hover { 
+            background-color: #e6b800; 
+        }
+        .action-btn {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .action-btn:hover {
+            background-color: #218838;
+        }
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+            font-size: 16px;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+        /* შეკვეთის კარტა */
+        .order-card {
+            background: #f8fbff;
+            border: 1px solid #d0e7ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .order-row span {
+            color: #555;
+        }
+        .order-row strong {
+            color: #222;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #ffc107;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- ენების ღილაკები -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLanguage('ka')">GE</button>
+        <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="setLanguage('ru')">RU</button>
+    </div>
+
+    <!-- ლოგო -->
+    <div class="logo-container">
+        <img src="logo.png" alt="PetTaxi Driver Logo">
+    </div>
+
+    <!-- ნაბიჯი 1: მძღოლის ავტორიზაცია (ტელეფონი) -->
+    <div id="step-driver-phone" class="step active">
+        <h2 data-key="title_login">მძღოლის პანელი - შესვლა</h2>
+        <div class="form-group">
+            <label data-key="label_phone">ტელეფონის ნომერი</label>
+            <input type="tel" id="driver-phone" placeholder="+995 5xx xx xx xx" required>
+        </div>
+        <button onclick="driverSendCode()" data-key="btn_send">კოდის გაგზავნა</button>
+    </div>
+
+    <!-- ნაბიჯი 2: SMS კოდის დადასტურება -->
+    <div id="step-driver-verify" class="step">
+        <h2 data-key="title_login">მძღოლის პანელი - შესვლა</h2>
+        <div class="form-group">
+            <label data-key="label_code">სმს-ით მიღებული 4-ნიშნა კოდი</label>
+            <input type="text" id="driver-code" placeholder="1234" maxlength="4" required>
+        </div>
+        <button onclick="driverVerifyCode()" data-key="btn_verify">დადასტურება</button>
+    </div>
+
+    <!-- ნაბიჯი 3: შეკვეთების მოლოდინი / ახალი შეკვეთა -->
+    <div id="step-driver-dashboard" class="step">
+        <h2 data-key="title_dashboard">შეკვეთების ძიება</h2>
+        <div id="no-order-msg" style="padding: 30px 0; color: #666;" data-key="waiting_order">
+            ველოდებით ახალ შეკვეთებს... 🚗
+        </div>
+
+        <!-- ახალი შემოსული შეკვეთის დეტალები (როცა გამოჩნდება) -->
+        <div id="incoming-order" style="display: none;">
+            <span class="status-badge" data-key="badge_new">ახალი შეკვეთა!</span>
+            
+            <div class="order-card">
+                <div class="order-row"><span data-key="o_client">კლიენტი:</span> <strong id="res-client">გიორგი ბერიძე</strong></div>
+                <div class="order-row"><span data-key="o_phone">ტელეფონი:</span> <strong id="res-phone">+995 599 12 34 56</strong></div>
+                <div class="order-row"><span data-key="o_start">საწყისი:</span> <strong id="res-start">ტარიელის ქუჩა 10ბ</strong></div>
+                <div class="order-row"><span data-key="o_end">დანიშნულება:</span> <strong id="res-end">ვასო გოძიაშვილის 13</strong></div>
+                <div class="order-row"><span data-key="o_passengers">მგზავრები:</span> <strong id="res-passengers">1 ადამიანი, 1 ცხოველი, 0 ბარგი</strong></div>
+                <div class="order-row"><span data-key="o_payment">გადახდა:</span> <strong id="res-payment" style="color: #0078d7;">ქეში (ნაღდი ფულით)</strong></div>
+                <div class="order-row"><span data-key="o_price">ფასი:</span> <strong id="res-price" style="color: #28a745; font-size: 18px;">30 ლარი</strong></div>
+            </div>
+
+            <button class="action-btn" onclick="acceptOrder()" data-key="btn_accept">შეკვეთის მიღება</button>
+            <button class="reject-btn" onclick="rejectOrder()" data-key="btn_reject">უარყოფა</button>
+        </div>
+    </div>
+
+    <!-- ნაბიჯი 4: გზაშია / შესრულება -->
+    <div id="step-driver-active" class="step">
+        <h2 data-key="title_active">მიმდინარე შეკვეთა</h2>
+        <div class="order-card" style="border-color: #28a745;">
+            <div class="order-row"><span data-key="o_status">სტატუსი:</span> <strong style="color: #28a745;" data-key="status_ontheway">მძღოლი მიდის მისამართზე</strong></div>
+            <div class="order-row"><span data-key="o_start">საწყისი:</span> <strong id="active-start">ტარიელის ქუჩა 10ბ</strong></div>
+            <div class="order-row"><span data-key="o_end">დანიშნულება:</span> <strong id="active-end">ვასო გოძიაშვილის 13</strong></div>
+        </div>
+        <button class="action-btn" onclick="finishOrder()" data-key="btn_finish_trip">მგზავრობის დასრულება</button>
+    </div>
+</div>
+
+<script>
+    const translations = {
+        ka: {
+            title_login: "მძღოლის პანელი - შესვლა",
+            label_phone: "ტელეფონის ნომერი",
+            btn_send: "კოდის გაგზავნა",
+            label_code: "სმს-ით მიღებული 4-ნიშნა კოდი",
+            btn_verify: "დადასტურება",
+            title_dashboard: "შეკვეთების ძიება",
+            waiting_order: "ველოდებით ახალ შეკვეთებს... 🚗",
+            badge_new: "ახალი შეკვეთა!",
+            o_client: "კლიენტი:",
+            o_phone: "ტელეფონი:",
+            o_start: "საწყისი:",
+            o_end: "დანიშნულება:",
+            o_passengers: "მგზავრები:",
+            o_payment: "გადახდა:",
+            o_price: "ფასი:",
+            btn_accept: "შეკვეთის მიღება",
+            btn_reject: "უარყოფა",
+            title_active: "მიმდინარე შეკვეთა",
+            o_status: "სტატუსი:",
+            status_ontheway: "მძღოლი მიდის მისამართზე",
+            btn_finish_trip: "მგზავრობის დასრულება",
+            err_phone: "გთხოვთ შეიყვანოთ სწორი ნომერი",
+            err_code: "კოდი შედგება 4 ნიშნისგან",
+            success_done: "მგზავრობა წარმატებით დასრულდა!"
+        },
+        en: {
+            title_login: "Driver Panel - Sign In",
+            label_phone: "Phone Number",
+            btn_send: "Send Code",
+            label_code: "4-digit code received via SMS",
+            btn_verify: "Verify",
+            title_dashboard: "Order Search",
+            waiting_order: "Waiting for new orders... 🚗",
+            badge_new: "New Order!",
+            o_client: "Client:",
+            o_phone: "Phone:",
+            o_start: "Pickup:",
+            o_end: "Destination:",
+            o_passengers: "Passengers:",
+            o_payment: "Payment:",
+            o_price: "Price:",
+            btn_accept: "Accept Order",
+            btn_reject: "Reject",
+            title_active: "Active Trip",
+            o_status: "Status:",
+            status_ontheway: "Driver is on the way",
+            btn_finish_trip: "Complete Trip",
+            err_phone: "Please enter a valid phone number",
+            err_code: "Code must be 4 digits",
+            success_done: "Trip completed successfully!"
+        },
+        ru: {
+            title_login: "Кабинет водителя - Вход",
+            label_phone: "Номер телефона",
+            btn_send: "Отправить код",
+            label_code: "4-значный код из SMS",
+            btn_verify: "Подтвердить",
+            title_dashboard: "Поиск заказов",
+            waiting_order: "Ожидание новых заказов... 🚗",
+            badge_new: "Новый заказ!",
+            o_client: "Клиент:",
+            o_phone: "Телефон:",
+            o_start: "Отправление:",
+            o_end: "Назначение:",
+            o_passengers: "Пассажиры:",
+            o_payment: "Оплата:",
+            o_price: "Цена:",
+            btn_accept: "Принять заказ",
+            btn_reject: "Отклонить",
+            title_active: "Текущая поездка",
+            o_status: "Статус:",
+            status_ontheway: "Водитель в пути",
+            btn_finish_trip: "Завершить поездку",
+            err_phone: "Пожалуйста, введите правильный номер",
+            err_code: "Код должен состоять из 4 цифр",
+            success_done: "Поездка успешно завершена!"
+        }
+    };
+
+    let currentLang = 'ka';
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('html-root').setAttribute('lang', lang);
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            }
+        });
+    }
+
+    function driverSendCode() {
+        const phone = document.getElementById('driver-phone').value;
+        if(phone.length < 9) {
+            alert(translations[currentLang].err_phone);
+            return;
+        }
+        document.getElementById('step-driver-phone').classList.remove('active');
+        document.getElementById('step-driver-verify').classList.add('active');
+    }
+
+    function driverVerifyCode() {
+        const code = document.getElementById('driver-code').value;
+        if(code.length !== 4) {
+            alert(translations[currentLang].err_code);
+            return;
+        }
+        document.getElementById('step-driver-verify').classList.remove('active');
+        document.getElementById('step-driver-dashboard').classList.add('active');
+
+        // სიმულაციისთვის: 3 წამში მძღოლს უვარდება "ახალი შეკვეთა"
+        setTimeout(() => {
+            document.getElementById('no-order-msg').style.display = 'none';
+            document.getElementById('incoming-order').style.display = 'block';
+        }, 3000);
+    }
+
+    function acceptOrder() {
+        document.getElementById('step-driver-dashboard').classList.remove('active');
+        document.getElementById('step-driver-active').classList.add('active');
+    }
+
+    function rejectOrder() {
+        document.getElementById('incoming-order').style.display = 'none';
+        document.getElementById('no-order-msg').style.display = 'block';
+        alert("შეკვეთა უარყოფილია.");
+    }
+
+    function finishOrder() {
+        alert(translations[currentLang].success_done);
+        document.getElementById('step-driver-active').classList.remove('active');
+        document.getElementById('step-driver-dashboard').classList.add('active');
+        document.getElementById('incoming-order').style.display = 'none';
+        document.getElementById('no-order-msg').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
